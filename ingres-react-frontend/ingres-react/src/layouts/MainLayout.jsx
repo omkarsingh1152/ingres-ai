@@ -4,7 +4,7 @@ import Header from "../components/header/Header";
 import { Outlet } from "react-router-dom";
 
 export default function MainLayout() {
-  const [sidebarOpen, setSidebarOpen] = useState(true);
+  const [sidebarOpen, setSidebarOpen] = useState(false);
 
   return (
     <div className="flex h-screen bg-[#0b0f19]">

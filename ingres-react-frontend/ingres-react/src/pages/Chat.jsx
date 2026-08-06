@@ -1,3 +1,11 @@
+import ChatHeader from "../components/chat/ChatHeader.jsx";
+
 export default function Chat() {
-  return <h1 className="text-3xl p-10">Chat Page</h1>;
+  return (
+    <div className="h-full flex flex-col bg-[#0b0f19]">
+
+      <ChatHeader />
+
+    </div>
+  );
 }
