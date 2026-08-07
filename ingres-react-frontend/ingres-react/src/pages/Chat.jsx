@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { useLocation } from "react-router-dom";
 
 import ChatHeader from "../components/chat/ChatHeader";
@@ -6,51 +6,38 @@ import ChatContainer from "../components/chat/ChatContainer";
 import ChatInput from "../components/chat/ChatInput";
 
 import { useChatContext } from "../context/ChatContext";
+import useChat from "../hooks/useChat";
 
 export default function Chat() {
   const { state } = useLocation();
 
-  const {
-    messages,
-    addUserMessage,
-    addAssistantMessage,
-  } = useChatContext();
+  const { addUserMessage } = useChatContext();
+  const { sendMessage } = useChat();
 
-  // Add initial prompt only once
+  // Prevent duplicate execution (React Strict Mode)
+  const initialized = useRef(false);
+
   useEffect(() => {
-    if (
-      state?.prompt &&
-      messages.length === 0
-    ) {
+    if (initialized.current) return;
+
+    if (state?.prompt) {
+      initialized.current = true;
+
+      // Show user message immediately
       addUserMessage(state.prompt);
 
-      setTimeout(() => {
-        addAssistantMessage(
-          "Hello! I'm INGRES AI. This is a temporary AI response."
-        );
-      }, 1000);
+      // Send to backend without adding user message again
+      sendMessage(state.prompt, false);
     }
   }, []);
 
-  const handleSend = (text) => {
-    addUserMessage(text);
-
-    setTimeout(() => {
-      addAssistantMessage(
-        "This is a temporary AI response."
-      );
-    }, 1000);
-  };
-
   return (
-    <div className="h-full flex flex-col bg-[#0b0f19]">
-
+    <div className="flex flex-col h-full bg-[#0b0f19]">
       <ChatHeader />
 
       <ChatContainer />
 
-      <ChatInput onSend={handleSend} />
-
+      <ChatInput onSend={sendMessage} />
     </div>
   );
 }
